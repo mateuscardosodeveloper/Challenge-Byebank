@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Modalidade
+from core.models import Modalidade, Ativo
 
 from finance.serializers import ModalidadeSerializer
 
@@ -82,3 +82,24 @@ class PrivateModalidadeApiTests(TestCase):
         response = self.client.post(MODALIDADE_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_modalidade_assigned_to_modalidades(self):
+        """Test filtering modalidades by those assigned to ativos"""
+        modalidade1 = Modalidade.objects.create(user=self.user, name='Renda Fixa')
+        modalidade2 = Modalidade.objects.create(user=self.user, name='Renda Variável')
+        modalidade3 = Modalidade.objects.create(user=self.user, name='Cripto')
+        ativos = Ativo.objects.create(
+            name='Bitcoin',
+            user=self.user,
+        )
+        ativos.modalidades.add(modalidade3)
+
+        response = self.client.get(MODALIDADE_URL, {'assigned_only': 1})
+
+        serializer1 = ModalidadeSerializer(modalidade1)
+        serializer2 = ModalidadeSerializer(modalidade2)
+        serializer3 = ModalidadeSerializer(modalidade3)
+        self.assertIn(serializer3.data, response.data)
+        self.assertNotIn(serializer2.data, response.data)
+        self.assertNotIn(serializer1.data, response.data)
+

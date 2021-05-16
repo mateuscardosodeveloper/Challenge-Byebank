@@ -49,13 +49,41 @@ class Modalidade(models.Model):
         return self.name
 
 
-class Ativos(models.Model):
+class Ativo(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=50)
-    modalidades = models.ManyToManyField('Modalidade')
+    modalidades = models.ManyToManyField('Modalidade', blank=False)
 
     def __str__(self):
         return self.name
+
+
+class Aplicacao(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    date_solicitation = models.DateTimeField(auto_now_add=True)
+    quantity = models.IntegerField(editable=False, null=True, blank=True)
+    value = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
+    ativos = models.ManyToManyField('Ativo', blank=False)
+
+    def __repr__(self):
+        return self.value
+
+
+class Resgate(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    date_solicitation = models.DateTimeField(auto_now_add=True)
+    quantity = models.IntegerField(editable=False)
+    value = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
+    ativos = models.ManyToManyField('Ativo', blank=False)
+
+    def __repr__(self):
+        return self.value

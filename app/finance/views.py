@@ -3,16 +3,16 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Modalidade, Ativos
+from core.models import Modalidade, Ativo
 
 
 from finance import serializers
 
 
-class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
+class BaseAtivoAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin):
-    """Base viewset for user owned recipe atributes"""
+    """Base viewset for user owned ativo atributes"""
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -23,7 +23,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
         )
         queryset = self.queryset
         if assigned_only:
-            queryset = queryset.filter(recipe__isnull=False)
+            queryset = queryset.filter(ativo__isnull=False)
 
         return queryset.filter(
             user=self.request.user
@@ -34,7 +34,7 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class ModalidadeViewSet(BaseRecipeAttrViewSet):
+class ModalidadeViewSet(BaseAtivoAttrViewSet):
     """Manage modalidade in the database"""
     queryset = Modalidade.objects.all()
     serializer_class = serializers.ModalidadeSerializer
@@ -43,7 +43,7 @@ class ModalidadeViewSet(BaseRecipeAttrViewSet):
 class AtivosViewSet(viewsets.ModelViewSet):
     """Manage ativos in the database"""
     serializer_class = serializers.AtivosSerializer
-    queryset = Ativos.objects.all()
+    queryset = Ativo.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 

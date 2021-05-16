@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Ativos, Modalidade
+from core.models import Ativo, Modalidade
 
 
 class ModalidadeSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class ModalidadeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modalidade
         fields = ('id', 'name')
-        read_only_fields = ('id',)
+        read_only_fields = ('id', )
 
 
 class AtivosSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class AtivosSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Ativos
+        model = Ativo
         fields = ('id', 'name', 'modalidades')
         read_only_fields = ('id',)
 

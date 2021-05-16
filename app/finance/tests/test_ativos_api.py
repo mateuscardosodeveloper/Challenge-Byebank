@@ -5,15 +5,15 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Modalidade, Ativos
+from core.models import Modalidade, Ativo
 
 from finance.serializers import AtivosSerializer
 
 
-ATIVOS_URL = reverse('ativos:ativos-list')
+ATIVOS_URL = reverse('ativos:ativo-list')
 
 
-def sample_modalidade(user, name='renda fixa'):
+def sample_modalidade(user, name='Renda Fixa'):
     """Create and return sample modalidade"""
     return Modalidade.objects.create(user=user, name=name)
 
@@ -25,7 +25,7 @@ def sample_ativos(user, **params):
     }
     defaults.update(params)
 
-    return Ativos.objects.create(user=user, **defaults)
+    return Ativo.objects.create(user=user, **defaults)
 
 
 class PublicAtivosApiTests(TestCase):
@@ -59,7 +59,7 @@ class PrivateAtivosApiTests(TestCase):
 
         response = self.client.get(ATIVOS_URL)
 
-        ativos = Ativos.objects.all().order_by('id')
+        ativos = Ativo.objects.all().order_by('id')
         serializer = AtivosSerializer(ativos, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
@@ -75,7 +75,7 @@ class PrivateAtivosApiTests(TestCase):
 
         response = self.client.get(ATIVOS_URL)
 
-        ativos = Ativos.objects.filter(user=self.user)
+        ativos = Ativo.objects.filter(user=self.user)
         serializer = AtivosSerializer(ativos, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -86,7 +86,7 @@ class PrivateAtivosApiTests(TestCase):
         modalidades1 = sample_modalidade(user=self.user, name='blah')
         payload = {
             'name': 'investimento imobiliário',
-            'modalidades': [modalidades1.id, ]
+            'modalidades': [modalidades1.id]
         }
         response = self.client.post(ATIVOS_URL, payload)
 
