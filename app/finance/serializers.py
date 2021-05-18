@@ -9,7 +9,7 @@ class ModalidadeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modalidade
         fields = ('id', 'name')
-        read_only_fields = ('id', )
+        read_only_fields = ('id',)
 
 
 class AtivosSerializer(serializers.ModelSerializer):

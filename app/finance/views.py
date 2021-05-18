@@ -10,11 +10,11 @@ from finance import serializers
 
 
 class BaseAtivoAttrViewSet(viewsets.GenericViewSet,
-                            mixins.ListModelMixin,
-                            mixins.CreateModelMixin):
+                           mixins.ListModelMixin,
+                           mixins.CreateModelMixin):
     """Base viewset for user owned ativo atributes"""
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
@@ -44,8 +44,8 @@ class AtivosViewSet(viewsets.ModelViewSet):
     """Manage ativos in the database"""
     serializer_class = serializers.AtivosSerializer
     queryset = Ativo.objects.all()
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def _params_to_ints(self, qs):
         """Convert a list of string IDs to a list of integers"""
@@ -53,11 +53,16 @@ class AtivosViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve the ativos for the authenticated user"""
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0))
+        )
         modalidades = self.request.query_params.get('modalidades')
         queryset = self.queryset
         if modalidades:
             modalidade_ids = self._params_to_ints(modalidades)
             queryset = queryset.filter(modalidades__id__in=modalidade_ids)
+        elif assigned_only:
+            queryset = queryset.filter(aplicacao__isnull=False)
 
         return queryset.filter(user=self.request.user)
 

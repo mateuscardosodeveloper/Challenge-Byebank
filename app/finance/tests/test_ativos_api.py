@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Modalidade, Ativo
+from core.models import Modalidade, Ativo, Aplicacao, User
 
 from finance.serializers import AtivosSerializer
 
@@ -101,3 +101,20 @@ class PrivateAtivosApiTests(TestCase):
         response = self.client.post(ATIVOS_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_ativos_assigned_to_aplicacao(self):
+        """Test filtering ativos by those assigned to aplicacao"""
+        ativos1 = sample_ativos(user=self.user, name='Bitcoin')
+        ativos2 = sample_ativos(user=self.user, name='Imobiliário')
+        aplicacao = Aplicacao.objects.create(
+            value=500,
+            user=self.user,
+        )
+        aplicacao.ativos.add(ativos1)
+
+        response = self.client.get(ATIVOS_URL, {'assigned_only': 1})
+
+        serializer1 = AtivosSerializer(ativos1)
+        serializer2 = AtivosSerializer(ativos2)
+        self.assertIn(serializer1.data, response.data)
+        self.assertNotIn(serializer2.data, response.data)

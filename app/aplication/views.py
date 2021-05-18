@@ -10,8 +10,8 @@ class CreateAplicationView(generics.CreateAPIView):
     """Create a new aplicação in the system"""
     serializer_class = AplicacaoSerializer
     queryset = Aplicacao.objects.all()
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         """Create a new aplicação"""

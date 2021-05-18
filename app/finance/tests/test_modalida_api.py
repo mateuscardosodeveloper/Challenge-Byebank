@@ -83,7 +83,7 @@ class PrivateModalidadeApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_retrieve_modalidade_assigned_to_modalidades(self):
+    def test_retrieve_modalidades_assigned_to_ativos(self):
         """Test filtering modalidades by those assigned to ativos"""
         modalidade1 = Modalidade.objects.create(user=self.user, name='Renda Fixa')
         modalidade2 = Modalidade.objects.create(user=self.user, name='Renda Variável')
