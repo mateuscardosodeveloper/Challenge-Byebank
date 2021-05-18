@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Modalidade, Ativo, Aplicacao, User
+from core.models import Modalidade, Ativo, Aplicacao
 
 from finance.serializers import AtivosSerializer
 

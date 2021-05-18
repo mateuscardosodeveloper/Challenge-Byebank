@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Modalidade, Ativo, Aplicacao
+from core.models import Ativo, Aplicacao
+from aplication.serializers import AplicacaoSerializer
 
 
 APLICACAO_URL = reverse('aplicacao:aplicacao')
@@ -19,6 +20,16 @@ def sample_ativos(user, **params):
     defaults.update(params)
 
     return Ativo.objects.create(user=user, **defaults)
+
+
+def sample_aplicacao(user, **params):
+    """Create and return sample aplicacao"""
+    defaults = {
+        'value': 500,
+    }
+    defaults.update(params)
+
+    return Aplicacao.objects.create(user=user, **defaults)
 
 
 class PublicAplicacaoApiTests(TestCase):
@@ -44,7 +55,19 @@ class PrivateAplicacaoApiTests(TestCase):
             'test12345'
         )
         self.client.force_authenticate(self.user)
-    
+
+    def test_retrieve_list_aplicacao(self):
+        """Test to retrieve a list of aplicacao"""
+        sample_aplicacao(self.user, value=200)
+        sample_aplicacao(self.user, value=100)
+
+        response = self.client.get(APLICACAO_URL)
+
+        aplicacao = Aplicacao.objects.all().order_by('id')
+        serializer = AplicacaoSerializer(aplicacao, many=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
     def test_create_aplicacao_to_failed(self):
         """Test to create new aplicação failed"""
         payload = {

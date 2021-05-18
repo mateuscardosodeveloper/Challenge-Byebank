@@ -85,8 +85,10 @@ class PrivateModalidadeApiTests(TestCase):
 
     def test_retrieve_modalidades_assigned_to_ativos(self):
         """Test filtering modalidades by those assigned to ativos"""
-        modalidade1 = Modalidade.objects.create(user=self.user, name='Renda Fixa')
-        modalidade2 = Modalidade.objects.create(user=self.user, name='Renda Variável')
+        modalidade1 = Modalidade.objects.create(user=self.user,
+                                                name='Renda Fixa')
+        modalidade2 = Modalidade.objects.create(user=self.user,
+                                                name='Renda Variável')
         modalidade3 = Modalidade.objects.create(user=self.user, name='Cripto')
         ativos = Ativo.objects.create(
             name='Bitcoin',
@@ -102,4 +104,3 @@ class PrivateModalidadeApiTests(TestCase):
         self.assertIn(serializer3.data, response.data)
         self.assertNotIn(serializer2.data, response.data)
         self.assertNotIn(serializer1.data, response.data)
-
