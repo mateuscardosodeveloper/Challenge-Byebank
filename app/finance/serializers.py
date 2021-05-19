@@ -12,7 +12,7 @@ class ModalidadeSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class AtivosSerializer(serializers.ModelSerializer):
+class AtivoSerializer(serializers.ModelSerializer):
     """Serializers for Ativos objects"""
     modalidades = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -25,6 +25,6 @@ class AtivosSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class AtivosDetailSerializer(AtivosSerializer):
+class AtivoDetailSerializer(AtivoSerializer):
     """Serializer a ativos detail"""
     modalidades = ModalidadeSerializer(many=True, read_only=True)

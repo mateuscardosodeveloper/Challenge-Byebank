@@ -9,7 +9,7 @@ from core.models import Ativo, Aplicacao
 from aplication.serializers import AplicacaoSerializer
 
 
-APLICACAO_URL = reverse('aplicacao:aplicacao')
+APLICACAO_URL = reverse('aplicacao:aplicacao_create')
 
 
 def sample_ativos(user, **params):
@@ -63,7 +63,7 @@ class PrivateAplicacaoApiTests(TestCase):
 
         response = self.client.get(APLICACAO_URL)
 
-        aplicacao = Aplicacao.objects.all().order_by('id')
+        aplicacao = Aplicacao.objects.all().order_by('quantity')
         serializer = AplicacaoSerializer(aplicacao, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)

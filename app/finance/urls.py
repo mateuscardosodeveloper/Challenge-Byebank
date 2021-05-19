@@ -5,7 +5,7 @@ from finance import views
 
 router = DefaultRouter()
 router.register('modalidade', views.ModalidadeViewSet)
-router.register('ativos', views.AtivosViewSet)
+router.register('ativos', views.AtivoViewSet)
 
 app_name = 'ativos'
 

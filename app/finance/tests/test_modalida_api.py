@@ -12,6 +12,11 @@ from finance.serializers import ModalidadeSerializer
 MODALIDADE_URL = reverse('ativos:modalidade-list')
 
 
+def detail_url(modalidade_id):
+    """Return modalidade detail URL"""
+    return reverse('ativos:modalidade-detail', args=[modalidade_id])
+
+
 class PublicModalidadeApiTests(TestCase):
     """Test the publicly available modalide API"""
 
@@ -82,6 +87,19 @@ class PrivateModalidadeApiTests(TestCase):
         response = self.client.post(MODALIDADE_URL, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_modalidade(self):
+        """Test to update the modalidade"""
+        modalidades = Modalidade.objects.create(user=self.user, name='Cripto')
+        payload = {
+            'name': 'Renda Fixa'
+        }
+
+        url = detail_url(modalidades.id)
+        self.client.put(url, payload)
+
+        modalidades.refresh_from_db()
+        self.assertEqual(modalidades.name, payload['name'])
 
     def test_retrieve_modalidades_assigned_to_ativos(self):
         """Test filtering modalidades by those assigned to ativos"""

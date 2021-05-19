@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 
 from core.models import Modalidade, Ativo, Aplicacao
 
-from finance.serializers import AtivosSerializer
+from finance.serializers import AtivoSerializer
 
 
 ATIVOS_URL = reverse('ativos:ativo-list')
@@ -16,6 +16,11 @@ ATIVOS_URL = reverse('ativos:ativo-list')
 def sample_modalidade(user, name='Renda Fixa'):
     """Create and return sample modalidade"""
     return Modalidade.objects.create(user=user, name=name)
+
+
+def detail_url(ativos_id):
+    """Return ativo detail URL"""
+    return reverse('ativos:ativo-detail', args=[ativos_id])
 
 
 def sample_ativos(user, **params):
@@ -60,7 +65,7 @@ class PrivateAtivosApiTests(TestCase):
         response = self.client.get(ATIVOS_URL)
 
         ativos = Ativo.objects.all().order_by('id')
-        serializer = AtivosSerializer(ativos, many=True)
+        serializer = AtivoSerializer(ativos, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
@@ -76,7 +81,7 @@ class PrivateAtivosApiTests(TestCase):
         response = self.client.get(ATIVOS_URL)
 
         ativos = Ativo.objects.filter(user=self.user)
-        serializer = AtivosSerializer(ativos, many=True)
+        serializer = AtivoSerializer(ativos, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data, serializer.data)
@@ -102,6 +107,35 @@ class PrivateAtivosApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_partial_update_ativos(self):
+        """Test to partial update the ativos"""
+        ativos = sample_ativos(user=self.user)
+        payload = {
+            'name': 'Imobiliário'
+        }
+
+        url = detail_url(ativos.id)
+        self.client.patch(url, payload)
+
+        ativos.refresh_from_db()
+        self.assertEqual(ativos.name, payload['name'])
+
+    def test_full_update_ativos(self):
+        """Test to full update the ativos"""
+        ativos = sample_ativos(user=self.user)
+        ativos.modalidades.add(sample_modalidade(user=self.user))
+        payload = {
+            'name': 'Investimento imobiliário'
+        }
+
+        url = detail_url(ativos.id)
+        self.client.put(url, payload)
+
+        ativos.refresh_from_db()
+        self.assertEqual(ativos.name, payload['name'])
+        modalidades = ativos.modalidades.all()
+        self.assertEqual(len(modalidades), 0)
+
     def test_retrieve_ativos_assigned_to_aplicacao(self):
         """Test filtering ativos by those assigned to aplicacao"""
         ativos1 = sample_ativos(user=self.user, name='Bitcoin')
@@ -114,7 +148,7 @@ class PrivateAtivosApiTests(TestCase):
 
         response = self.client.get(ATIVOS_URL, {'assigned_only': 1})
 
-        serializer1 = AtivosSerializer(ativos1)
-        serializer2 = AtivosSerializer(ativos2)
+        serializer1 = AtivoSerializer(ativos1)
+        serializer2 = AtivoSerializer(ativos2)
         self.assertIn(serializer1.data, response.data)
         self.assertNotIn(serializer2.data, response.data)

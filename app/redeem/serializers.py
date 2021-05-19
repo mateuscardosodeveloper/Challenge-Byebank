@@ -1,16 +1,16 @@
 from rest_framework import serializers
 
-from core.models import Aplicacao, Ativo
+from core.models import Resgate, Ativo
 
 
-class AplicacaoSerializer(serializers.ModelSerializer):
-    """Serializer for aplicação objects"""
+class ResgateSerializer(serializers.ModelSerializer):
+    """Serializers for resgate objects"""
     ativos = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Ativo.objects.all()
     )
 
     class Meta:
-        model = Aplicacao
+        model = Resgate
         fields = ('date_solicitation', 'quantity', 'value', 'ativos')
         read_only_fields = ('quantity', )

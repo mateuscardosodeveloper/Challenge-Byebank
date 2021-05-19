@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'aplication',   
     'core',
     'finance',
+    'redeem',
 ]
 
 MIDDLEWARE = [

@@ -67,7 +67,7 @@ class Aplicacao(models.Model):
         on_delete=models.CASCADE,
     )
     date_solicitation = models.DateTimeField(auto_now_add=True)
-    quantity = models.IntegerField(editable=False, null=True, blank=True)
+    quantity = models.AutoField(primary_key=True)
     value = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
     ativos = models.ManyToManyField('Ativo', blank=False)
 
@@ -81,7 +81,7 @@ class Resgate(models.Model):
         on_delete=models.CASCADE,
     )
     date_solicitation = models.DateTimeField(auto_now_add=True)
-    quantity = models.IntegerField(editable=False)
+    quantity = models.AutoField(primary_key=True)
     value = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
     ativos = models.ManyToManyField('Ativo', blank=False)
 

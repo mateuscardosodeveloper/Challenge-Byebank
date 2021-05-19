@@ -8,10 +8,10 @@ from core.models import Modalidade, Ativo
 from finance import serializers
 
 
-class BaseAtivoAttrViewSet(viewsets.GenericViewSet,
-                           mixins.ListModelMixin,
-                           mixins.CreateModelMixin):
-    """Base viewset for user owned ativo atributes"""
+class ModalidadeViewSet(viewsets.ModelViewSet):
+    """Manage modalidade in the database"""
+    queryset = Modalidade.objects.all()
+    serializer_class = serializers.ModalidadeSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -33,15 +33,9 @@ class BaseAtivoAttrViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class ModalidadeViewSet(BaseAtivoAttrViewSet):
-    """Manage modalidade in the database"""
-    queryset = Modalidade.objects.all()
-    serializer_class = serializers.ModalidadeSerializer
-
-
-class AtivosViewSet(viewsets.ModelViewSet):
+class AtivoViewSet(viewsets.ModelViewSet):
     """Manage ativos in the database"""
-    serializer_class = serializers.AtivosSerializer
+    serializer_class = serializers.AtivoSerializer
     queryset = Ativo.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -68,7 +62,7 @@ class AtivosViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         """Return appropriate serializer class"""
         if self.action == 'retrieve':
-            return serializers.AtivosDetailSerializer
+            return serializers.AtivoDetailSerializer
 
         return self.serializer_class
 
