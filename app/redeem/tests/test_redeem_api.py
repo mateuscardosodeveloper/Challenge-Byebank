@@ -10,6 +10,7 @@ from redeem.serializers import ResgateSerializer
 
 RESGATE_URL = reverse('resgate:resgate_create')
 
+
 def sample_resgate(user, **params):
     """Create and return sample resgate"""
     defaults = {
