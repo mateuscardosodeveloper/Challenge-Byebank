@@ -1,4 +1,4 @@
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -24,9 +24,7 @@ class ModalidadeViewSet(viewsets.ModelViewSet):
         if assigned_only:
             queryset = queryset.filter(ativo__isnull=False)
 
-        return queryset.filter(
-            user=self.request.user
-        ).order_by('-name').distinct()
+        return queryset.filter().order_by('-name').distinct()
 
     def perform_create(self, serializer):
         """Create a new object"""
@@ -57,7 +55,7 @@ class AtivoViewSet(viewsets.ModelViewSet):
         elif assigned_only:
             queryset = queryset.filter(aplicacao__isnull=False)
 
-        return queryset.filter(user=self.request.user)
+        return queryset.filter()
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""

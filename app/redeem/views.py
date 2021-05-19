@@ -13,6 +13,10 @@ class CreateResgateView(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = self.queryset
+        return queryset.filter(user=self.request.user)
+
     def perform_create(self, serializer):
         """Create a new aplicação"""
         serializer.save(user=self.request.user)

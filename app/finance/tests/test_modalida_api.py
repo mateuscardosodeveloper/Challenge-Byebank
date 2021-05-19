@@ -54,8 +54,9 @@ class PrivateModalidadeApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_modalidade_limieted_to_user(self):
-        """Test the only modalidade for authenticated user are returned"""
+    def test_modalidade_limieted_any_user_is_authenticated(self):
+        """Test the only modalidade for the any authenticated user
+        are returned"""
         user2 = get_user_model().objects.create_user(
             'test2@email.com',
             'test123'
@@ -67,7 +68,7 @@ class PrivateModalidadeApiTests(TestCase):
         response = self.client.get(MODALIDADE_URL)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['name'], modalidade.name)
 
     def test_create_modalidade_successful(self):

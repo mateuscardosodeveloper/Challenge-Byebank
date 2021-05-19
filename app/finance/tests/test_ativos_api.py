@@ -69,22 +69,22 @@ class PrivateAtivosApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_limited_ativos_to_user(self):
-        """Test the only ativos for authenticated user is returned"""
+    def test_limited_ativos_any_user_is_authenticated(self):
+        """Test the only ativos for the any authenticated user is returned"""
         user2 = get_user_model().objects.create_user(
             'test2@email.com',
             'test123'
         )
         sample_ativos(user=user2, name='Investimento em Bitcoin')
-        sample_ativos(user=self.user, name='Investimento imobiliário')
+        sample_ativos(user=self.user, name='Investimnto imobiliário')
 
         response = self.client.get(ATIVOS_URL)
 
         ativos = Ativo.objects.filter(user=self.user)
         serializer = AtivoSerializer(ativos, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[1:], serializer.data)
 
     def test_create_ativos_successful(self):
         """Test to create ativos with success"""

@@ -68,6 +68,24 @@ class PrivateAplicacaoApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
+    def test_limited_to_user_who_made_the_aplication(self):
+        """Test the only aplicação is returned to user authenticated
+        who made the aplication"""
+        user2 = get_user_model().objects.create_user(
+            'test2@email.com',
+            'test12345',
+        )
+        sample_aplicacao(user=user2)
+        sample_aplicacao(user=self.user)
+
+        response = self.client.get(APLICACAO_URL)
+
+        aplicacoes = Aplicacao.objects.filter(user=self.user)
+        serializer = AplicacaoSerializer(aplicacoes, many=True)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data, serializer.data)
+
     def test_create_aplicacao_to_failed(self):
         """Test to create new aplicação failed"""
         payload = {
